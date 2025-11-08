@@ -8,12 +8,14 @@ import {
   Box,
   ListItem,
   ListItemIcon,
+  Button,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ReactElement } from "react";
 import MovieIcon from "@mui/icons-material/Movie";
 import HomeIcon from "@mui/icons-material/Home";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const drawerWidth = 240;
 
@@ -25,7 +27,20 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "center",
 }));
 
-const Navbar = ({ children }: { children: ReactElement }): ReactElement => {
+const Navbar = ({
+  children,
+}: {
+  children: ReactElement;
+}): ReactElement | null => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  console.log(isAuthenticated);
+
+  if (!isAuthenticated) {
+    return <>{children}</>;
+  }
+
   return (
     <>
       <CssBaseline />
@@ -59,6 +74,17 @@ const Navbar = ({ children }: { children: ReactElement }): ReactElement => {
             </ListItem>
           ))}
         </List>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={() => {
+            navigate("/logout");
+            window.location.reload();
+          }}
+          sx={{ mt: 2 }}
+        >
+          Sair
+        </Button>
       </Drawer>
       <Box
         component="main"

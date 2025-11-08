@@ -1,6 +1,6 @@
 import { Container } from "@mui/material";
-import AppRoutes from "./AppRoutes";
 import Navbar from "./components/Navbar";
+import { AppRoutes } from "./routes/AppRoutes";
 
 function App() {
   return (
