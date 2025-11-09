@@ -8,20 +8,12 @@ export const moviesApi = createApi({
   reducerPath: "moviesApi",
   baseQuery,
   endpoints: (builder) => ({
-    getTopRatedMovies: builder.query<
-      MovieListResponse,
-      { page?: number; language?: string }
-    >({
-      query: ({ page = 1, language = "pt-BR" }) =>
-        `/movie/top_rated?api_key=${API_KEY}&language=${language}&page=${page}`,
-    }),
-    getPopularMovies: builder.query<
-      MovieListResponse,
-      { page?: number; language?: string }
-    >({
-      query: ({ page = 1, language = "pt-BR" }) =>
-        `/movie/popular?api_key=${API_KEY}&language=${language}&page=${page}`,
-    }),
+    getMoviesByCategory: builder.query<MovieListResponse, { category: string }>(
+      {
+        query: ({ category }) =>
+          `/movie/${category}?api_key=${API_KEY}&language=pt-BR&page=1`,
+      }
+    ),
     getMovieDetails: builder.query<
       MovieDetails,
       { id: number; language?: string }
@@ -35,8 +27,5 @@ export const moviesApi = createApi({
   }),
 });
 
-export const {
-  useGetTopRatedMoviesQuery,
-  useGetPopularMoviesQuery,
-  useLazyGetMovieDetailsQuery,
-} = moviesApi;
+export const { useGetMoviesByCategoryQuery, useLazyGetMovieDetailsQuery } =
+  moviesApi;

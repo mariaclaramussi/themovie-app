@@ -4,6 +4,7 @@ import LoginPage from "../pages/LoginPage";
 import FavoritesPage from "../pages/FavoritesPage";
 import ProtectedRoute from "./ProtectedRoute";
 import LogoutPage from "../pages/LogoutPage";
+import { MovieListPage } from "../pages/MoviesListPage";
 
 export function AppRoutes() {
   return (
@@ -13,6 +14,7 @@ export function AppRoutes() {
       <Route element={<ProtectedRoute />}>
         <Route path="/home" element={<HomePage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
+        <Route path="/movies/:category" element={<MovieListPage />} />
         <Route path="/logout" element={<LogoutPage />} />
       </Route>
 

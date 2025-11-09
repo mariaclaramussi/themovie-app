@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLazyGetMovieDetailsQuery } from "../api/movieApi";
-import { useMarkAsFavoriteMutation } from "../api/accountApi";
 import { useAccount } from "../hooks/useAccount";
 
 const IMG_URL = process.env.REACT_APP_TMDB_IMG_URL;
@@ -29,7 +28,7 @@ const style = {
 };
 
 export default function MovieCard({ movie }: { movie: Movie }) {
-  const { title, poster_path, overview } = movie;
+  const { title, poster_path, overview, release_date } = movie;
   const { favoriteMovies, toggleFavorite } = useAccount();
 
   const [open, setOpen] = useState(false);
@@ -60,7 +59,7 @@ export default function MovieCard({ movie }: { movie: Movie }) {
   return (
     <>
       <Card sx={{ maxWidth: 345 }}>
-        <CardHeader title={title} subheader="September 14, 2016" />
+        <CardHeader title={title} subheader={release_date} />
         <CardMedia
           component="img"
           image={`${IMG_URL}${poster_path}`}

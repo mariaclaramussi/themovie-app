@@ -1,14 +1,23 @@
-import { Box, Button, Typography } from "@mui/material";
-import { Movie } from "../types/movie";
+import { Box, Button, Link, Typography } from "@mui/material";
 import MovieCard from "./MovieCard";
+import { useGetMoviesByCategoryQuery } from "../api/movieApi";
+import { Movie } from "../types/movie";
 
 interface MovieListProps {
-  movies: Movie[];
   title: string;
+  category: string;
 }
 
 const MovieList = (props: MovieListProps) => {
-  const { movies, title } = props;
+  const { category, title } = props;
+
+  const { data, isLoading } = useGetMoviesByCategoryQuery({ category });
+
+  const movies = data?.results?.slice(0, 3) || [];
+
+  if (isLoading) {
+    return <Typography>Carregando...</Typography>;
+  }
 
   return (
     <Box>
@@ -21,7 +30,9 @@ const MovieList = (props: MovieListProps) => {
         }}
       >
         <Typography variant="h2">{title}</Typography>
-        <Button>Ver mais</Button>
+        <Button component={Link} href={`/movies/${category}`}>
+          Ver mais
+        </Button>
       </Box>
       <Box
         sx={{
@@ -30,8 +41,8 @@ const MovieList = (props: MovieListProps) => {
           gap: "1rem",
         }}
       >
-        {movies.map((movie) => (
-          <MovieCard movie={movie} />
+        {movies.map((movie: Movie) => (
+          <MovieCard key={movie.id} movie={movie} />
         ))}
       </Box>
     </Box>
