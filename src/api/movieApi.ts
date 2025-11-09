@@ -1,18 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { MovieDetails, MovieListResponse } from "../types/movie";
+import { baseQuery } from "./baseApi";
 
-const BASE_URL = process.env.REACT_APP_TMDB_BASE_URL;
 const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
 
 export const moviesApi = createApi({
   reducerPath: "moviesApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
-    prepareHeaders: (headers) => {
-      headers.set("Content-Type", "application/json");
-      return headers;
-    },
-  }),
+  baseQuery,
   endpoints: (builder) => ({
     getTopRatedMovies: builder.query<
       MovieListResponse,
