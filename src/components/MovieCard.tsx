@@ -10,8 +10,10 @@ import {
   Modal,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLazyGetMovieDetailsQuery } from "../api/movieApi";
+import { useMarkAsFavoriteMutation } from "../api/accountApi";
+import { useAccount } from "../hooks/useAccount";
 
 const IMG_URL = process.env.REACT_APP_TMDB_IMG_URL;
 
@@ -28,7 +30,10 @@ const style = {
 
 export default function MovieCard({ movie }: { movie: Movie }) {
   const { title, poster_path, overview } = movie;
+  const { favoriteMovies, toggleFavorite } = useAccount();
+
   const [open, setOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const [
     fetchMovieDetails,
@@ -41,6 +46,16 @@ export default function MovieCard({ movie }: { movie: Movie }) {
   };
 
   const handleClose = () => setOpen(false);
+
+  useEffect(() => {
+    if (!favoriteMovies) return;
+
+    const found = favoriteMovies.results.some(
+      (fav: any) => fav.id === movie.id
+    );
+
+    setIsFavorite(found);
+  }, [favoriteMovies, movie.id]);
 
   return (
     <>
@@ -81,6 +96,15 @@ export default function MovieCard({ movie }: { movie: Movie }) {
               <Typography variant="body2" color="text.secondary">
                 {movieDetails?.genres.map((g) => g.name).join(", ")}
               </Typography>
+              <Button
+                onClick={() => toggleFavorite(movieDetails?.id!, isFavorite)}
+                color={isFavorite ? "error" : "primary"}
+                sx={{ mt: 2 }}
+              >
+                {isFavorite
+                  ? "💔 Remover dos Favoritos"
+                  : "⭐ Adicionar aos Favoritos"}
+              </Button>
             </>
           )}
         </Box>

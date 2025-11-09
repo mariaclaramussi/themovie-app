@@ -13,7 +13,6 @@ import {
 import { styled } from "@mui/material/styles";
 import { ReactElement } from "react";
 import MovieIcon from "@mui/icons-material/Movie";
-import HomeIcon from "@mui/icons-material/Home";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
@@ -61,8 +60,8 @@ const Navbar = ({
         <Divider />
         <List>
           {[
-            { text: "Início", icon: <HomeIcon />, path: "/" },
-            { text: "Detalhes", icon: <MovieIcon />, path: "/details" },
+            { text: "Home", icon: <MovieIcon />, path: "/home" },
+            { text: "Favoritos", icon: <MovieIcon />, path: "/favorites" },
           ].map((item) => (
             <ListItem key={item.text} disablePadding>
               <ListItemButton component={Link} to={item.path}>
