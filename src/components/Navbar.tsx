@@ -35,8 +35,6 @@ const Navbar = ({
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  console.log(isAuthenticated);
-
   if (!isAuthenticated) {
     return <>{children}</>;
   }
