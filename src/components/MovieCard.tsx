@@ -1,113 +1,76 @@
 import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import { Movie } from "../types/movie";
-import {
-  Box,
-  Button,
-  CardActions,
-  CircularProgress,
-  Modal,
-  Typography,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+import { Button, CardActions, CardContent, Typography } from "@mui/material";
+import { useState } from "react";
+import { MovieDetailsModal } from "./MovieDetailsModal";
 import { useLazyGetMovieDetailsQuery } from "../api/movieApi";
 import { useAccount } from "../hooks/useAccount";
 
 const IMG_URL = process.env.REACT_APP_TMDB_IMG_URL;
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "80%",
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-};
-
-export default function MovieCard({ movie }: { movie: Movie }) {
-  const { title, poster_path, overview, release_date } = movie;
-  const { favoriteMovies, toggleFavorite } = useAccount();
+export default function MovieCard({
+  movie,
+  isFavoriteItem,
+}: {
+  movie: Movie;
+  isFavoriteItem?: boolean;
+}) {
+  const { title, poster_path, release_date } = movie;
 
   const [open, setOpen] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
 
-  const [
-    fetchMovieDetails,
-    { data: movieDetails, isFetching: isFetchingDetails },
-  ] = useLazyGetMovieDetailsQuery();
+  const { toggleFavorite } = useAccount();
+
+  const [fetchMovieDetails, { data: movieDetails }] =
+    useLazyGetMovieDetailsQuery();
 
   const handleOpen = (id: number) => {
     setOpen(true);
-    fetchMovieDetails({ id });
+    fetchMovieDetails({ id, language: "pt-BR" });
   };
 
   const handleClose = () => setOpen(false);
 
-  useEffect(() => {
-    if (!favoriteMovies) return;
-
-    const found = favoriteMovies.results.some(
-      (fav: any) => fav.id === movie.id
-    );
-
-    setIsFavorite(found);
-  }, [favoriteMovies, movie.id]);
-
   return (
     <>
-      <Card sx={{ maxWidth: 345 }}>
-        <CardHeader title={title} subheader={release_date} />
+      <Card>
         <CardMedia
           component="img"
           image={`${IMG_URL}${poster_path}`}
           alt={title}
         />
+        <CardContent sx={{ p: 1 }}>
+          <Typography>{title}</Typography>
+          <Typography variant="body2" color="text.secondary">
+            {release_date}
+          </Typography>
+        </CardContent>
         <CardActions>
-          <Button size="small" onClick={() => handleOpen(movie.id)}>
+          <Button
+            size="small"
+            onClick={() => handleOpen(movie.id)}
+            color="secondary"
+          >
             Saiba mais
           </Button>
+          {isFavoriteItem && (
+            <Button
+              size="small"
+              onClick={() => toggleFavorite(movie.id, true)}
+              color="error"
+            >
+              Remover dos favoritos
+            </Button>
+          )}
         </CardActions>
       </Card>
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          {isFetchingDetails ? (
-            <CircularProgress />
-          ) : (
-            <>
-              <img
-                src={`${IMG_URL}${movieDetails?.backdrop_path}`}
-                alt={title}
-                style={{ marginBottom: "1rem" }}
-              />
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                {title}
-              </Typography>
-              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                {overview}
-              </Typography>
-              <Typography variant="body2" mt={1}>
-                🎬 {movieDetails?.runtime} min | ⭐{" "}
-                {movieDetails?.vote_average.toFixed(1)}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {movieDetails?.genres.map((g) => g.name).join(", ")}
-              </Typography>
-              <Button
-                onClick={() => toggleFavorite(movieDetails?.id!, isFavorite)}
-                color={isFavorite ? "error" : "primary"}
-                sx={{ mt: 2 }}
-              >
-                {isFavorite
-                  ? "💔 Remover dos Favoritos"
-                  : "⭐ Adicionar aos Favoritos"}
-              </Button>
-            </>
-          )}
-        </Box>
-      </Modal>
+      <MovieDetailsModal
+        movieId={movie.id}
+        open={open}
+        handleClose={handleClose}
+        details={movieDetails}
+      />
     </>
   );
 }
