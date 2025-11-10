@@ -3,6 +3,14 @@ import { Box, Container, Typography } from "@mui/material";
 import { useGetMoviesByCategoryQuery } from "../api/movieApi";
 import MovieCard from "../components/MovieCard";
 import { Movie } from "../types/movie";
+import { GoBackButton } from "../components/GoBackButton";
+
+const mapCategoryToTitle: { [key: string]: string } = {
+  popular: "Filmes Populares",
+  top_rated: "Filmes Mais Bem Avaliados",
+  upcoming: "Próximos Lançamentos",
+  now_playing: "Em Cartaz",
+};
 
 export function MovieListPage() {
   const { category } = useParams<{ category: string }>();
@@ -16,10 +24,23 @@ export function MovieListPage() {
 
   return (
     <Container sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        {category?.replace("_", " ").toUpperCase()}
-      </Typography>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+      <Box sx={{ display: "flex", mb: 2, gap: 2 }}>
+        <GoBackButton />
+        <Typography
+          variant="h4"
+          sx={{ fontSize: "2rem", fontWeight: "bold", mb: 3 }}
+        >
+          {mapCategoryToTitle[category!]}
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "1rem",
+        }}
+      >
         {movies.map((movie: Movie) => (
           <MovieCard movie={movie} key={movie.id} />
         ))}

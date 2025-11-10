@@ -1,24 +1,37 @@
+import { Box, Typography } from "@mui/material";
+import MovieCard from "../components/MovieCard";
 import { useAccount } from "../hooks/useAccount";
+import { Movie } from "../types/movie";
+import { GoBackButton } from "../components/GoBackButton";
 
 const FavoritesPage = () => {
-  const { favoriteMovies, toggleFavorite, isLoading } = useAccount();
+  const { favoriteMovies, isLoading } = useAccount();
 
   if (isLoading) return <p>Carregando favoritos...</p>;
   if (!favoriteMovies) return <p>Nenhum filme favorito encontrado.</p>;
 
   return (
     <div>
-      <h2>Meus Favoritos</h2>
-      <ul>
-        {favoriteMovies.results.map((movie: any) => (
-          <li key={movie.id}>
-            {movie.title}{" "}
-            <button onClick={() => toggleFavorite(movie.id, true)}>
-              Remover
-            </button>
-          </li>
+      <Box sx={{ display: "flex", mb: 2, gap: 2 }}>
+        <GoBackButton />
+        <Typography
+          variant="h4"
+          sx={{ fontSize: "2rem", fontWeight: "bold", mb: 3 }}
+        >
+          Meus Favoritos
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "1rem",
+        }}
+      >
+        {favoriteMovies.results.map((movie: Movie) => (
+          <MovieCard movie={movie} key={movie.id} isFavoriteItem />
         ))}
-      </ul>
+      </Box>
     </div>
   );
 };

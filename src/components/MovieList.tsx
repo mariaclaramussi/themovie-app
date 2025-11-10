@@ -20,7 +20,7 @@ const MovieList = (props: MovieListProps) => {
   }
 
   return (
-    <Box>
+    <Box sx={{ mb: 4 }}>
       <Box
         sx={{
           display: "flex",
@@ -29,7 +29,9 @@ const MovieList = (props: MovieListProps) => {
           mb: 2,
         }}
       >
-        <Typography variant="h2">{title}</Typography>
+        <Typography variant="h2" sx={{ fontSize: "2rem", fontWeight: "bold" }}>
+          {title}
+        </Typography>
         <Button component={Link} href={`/movies/${category}`}>
           Ver mais
         </Button>
