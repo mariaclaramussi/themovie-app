@@ -2,6 +2,7 @@ import { Modal, Box, Typography, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAccount } from "../hooks/useAccount";
 import { MovieDetails } from "../types/movie";
+import { MovieRatingForm } from "./MovieRatingForm";
 
 const IMG_URL = process.env.REACT_APP_TMDB_IMG_URL;
 
@@ -11,10 +12,11 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "50%",
+  maxHeight: "80vh",
+  overflow: "scroll",
   bgcolor: "background.paper",
   boxShadow: 24,
   borderRadius: "8px",
-  overflow: "hidden",
 };
 
 export const MovieDetailsModal = ({
@@ -90,6 +92,8 @@ export const MovieDetailsModal = ({
               ? "💔 Remover dos Favoritos"
               : "⭐ Adicionar aos Favoritos"}
           </Button>
+
+          <MovieRatingForm movieId={movieId} />
         </Box>
       </Box>
     </Modal>

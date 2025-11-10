@@ -49,3 +49,15 @@ export interface MovieDetails {
   vote_average: number;
   vote_count: number;
 }
+
+export interface AddRatingRequest {
+  movieId: number;
+  value: number;
+  sessionId: string;
+}
+
+export interface AddRatingResponse {
+  success: boolean;
+  status_code: number;
+  status_message: string;
+}
