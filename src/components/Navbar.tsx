@@ -9,10 +9,12 @@ import {
   ListItem,
   ListItemIcon,
   Button,
+  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ReactElement } from "react";
-import MovieIcon from "@mui/icons-material/Movie";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import StarOutlinedIcon from "@mui/icons-material/StarOutlined";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
@@ -55,13 +57,17 @@ const Navbar = ({
         open
       >
         <DrawerHeader>
-          <h1>Header</h1>
+          <Typography variant="h6">The Movie DB</Typography>
         </DrawerHeader>
         <Divider />
         <List>
           {[
-            { text: "Home", icon: <MovieIcon />, path: "/home" },
-            { text: "Favoritos", icon: <MovieIcon />, path: "/favorites" },
+            { text: "Home", icon: <HomeOutlinedIcon />, path: "/home" },
+            {
+              text: "Favoritos",
+              icon: <StarOutlinedIcon />,
+              path: "/favorites",
+            },
           ].map((item) => (
             <ListItem key={item.text} disablePadding>
               <ListItemButton component={Link} to={item.path}>
@@ -71,17 +77,28 @@ const Navbar = ({
             </ListItem>
           ))}
         </List>
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={() => {
-            navigate("/logout");
-            window.location.reload();
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            justifyContent: "end",
+            paddingBottom: 3,
           }}
-          sx={{ mt: 2 }}
         >
-          Sair
-        </Button>
+          <Divider />
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={() => {
+              navigate("/logout");
+              window.location.reload();
+            }}
+            sx={{ width: "80%", margin: "0 auto", mt: 2 }}
+          >
+            Sair
+          </Button>
+        </Box>
       </Drawer>
       <Box
         component="main"

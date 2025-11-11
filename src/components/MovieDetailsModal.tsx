@@ -1,8 +1,17 @@
-import { Modal, Box, Typography, Button } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAccount } from "../hooks/useAccount";
 import { MovieDetails } from "../types/movie";
 import { MovieRatingForm } from "./MovieRatingForm";
+import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 
 const IMG_URL = process.env.REACT_APP_TMDB_IMG_URL;
 
@@ -45,56 +54,80 @@ export const MovieDetailsModal = ({
   return (
     <Modal open={open} onClose={handleClose}>
       <Box sx={style}>
-        <img
-          src={`${IMG_URL}${details?.backdrop_path}`}
-          alt={details?.title}
-          style={{
-            marginBottom: "1rem",
-            maxHeight: "300px",
-            width: "100%",
-            objectFit: "cover",
-          }}
-        />
-        <Box sx={{ px: 4, pb: 2 }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.25rem",
-              }}
-            >
-              <Typography component="h2" sx={{ fontSize: "1.5rem" }}>
-                {details?.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                🎬 {details?.runtime} min | ⭐{" "}
-                {details?.vote_average.toFixed(1)}
-              </Typography>
-            </Box>
-            <Typography variant="body2" color="text.secondary">
-              {details?.genres.map((g) => g.name).join(", ")}
-            </Typography>
+        {!details ? (
+          <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+            <CircularProgress />
           </Box>
+        ) : (
+          <>
+            <img
+              src={`${IMG_URL}${details?.backdrop_path}`}
+              alt={details?.title}
+              style={{
+                marginBottom: "1rem",
+                maxHeight: "300px",
+                width: "100%",
+                objectFit: "cover",
+              }}
+            />
+            <Box sx={{ px: 4, pb: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.25rem",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Typography component="h2" sx={{ fontSize: "1.5rem" }}>
+                      {details?.title}
+                    </Typography>
+                    <Tooltip
+                      title={
+                        isFavorite
+                          ? "Remover dos favoritos"
+                          : "Adicionar aos favoritos"
+                      }
+                    >
+                      <IconButton
+                        onClick={() => toggleFavorite(details?.id!, isFavorite)}
+                        color={isFavorite ? "error" : "primary"}
+                      >
+                        {isFavorite ? (
+                          <FavoriteOutlinedIcon />
+                        ) : (
+                          <FavoriteBorderOutlinedIcon />
+                        )}
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
 
-          <Typography sx={{ mt: 2 }}>{details?.overview}</Typography>
-          <Button
-            onClick={() => toggleFavorite(details?.id!, isFavorite)}
-            color={isFavorite ? "error" : "primary"}
-            sx={{ mt: 2 }}
-          >
-            {isFavorite
-              ? "💔 Remover dos Favoritos"
-              : "⭐ Adicionar aos Favoritos"}
-          </Button>
+                  <Typography variant="body2" color="text.secondary">
+                    🎬 {details?.runtime} min | ⭐{" "}
+                    {details?.vote_average.toFixed(1)}
+                    /10
+                  </Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  Gêneros:{" "}
+                  <Box sx={{ color: "text.primary" }}>
+                    {details?.genres.map((g) => g.name).join(", ")}
+                  </Box>
+                </Typography>
+              </Box>
 
-          <MovieRatingForm movieId={movieId} />
-        </Box>
+              <Typography sx={{ mt: 2 }}>{details?.overview}</Typography>
+
+              <MovieRatingForm movieId={movieId} />
+            </Box>
+          </>
+        )}
       </Box>
     </Modal>
   );

@@ -26,8 +26,7 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
   movieId,
 }) => {
   const { sessionId } = useAccount();
-  const [addRating, { isLoading, isSuccess, isError }] =
-    useAddMovieRatingMutation();
+  const [addRating, { isLoading, isError }] = useAddMovieRatingMutation();
 
   const {
     control,
@@ -36,7 +35,7 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
     setValue,
     reset,
   } = useForm<RatingFormValues>({
-    defaultValues: { value: 5 },
+    defaultValues: { value: 0.5 },
   });
 
   const {
@@ -86,27 +85,26 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
         mt: 3,
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
       }}
     >
-      <Typography variant="h6" mb={1}>
-        Avaliar este filme
-      </Typography>
-
       {alreadyRated ? (
         <>
-          <Typography variant="h5" color="primary">
-            ⭐ {(accountState!.rated as { value: number }).value.toFixed(1)}
+          <Typography variant="h6" mb={1} fontWeight="bold">
+            Sua avaliação: ⭐{" "}
+            {(accountState!.rated as { value: number }).value.toFixed(1)} /10
           </Typography>
-          <Alert severity="info" sx={{ mt: 2 }}>
-            Você já avaliou este filme.
-            <br />
-            Sua nota:{" "}
-            {(accountState!.rated as { value: number }).value.toFixed(1)}
-          </Alert>
         </>
       ) : (
-        <>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6" mb={1} fontWeight="bold">
+            Avaliar
+          </Typography>
           <Typography variant="h5" color="primary" sx={{ mb: 1 }}>
             ⭐ {currentValue.toFixed(1)}
           </Typography>
@@ -151,18 +149,12 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
             {isLoading ? <CircularProgress size={22} /> : "Enviar avaliação"}
           </Button>
 
-          {isSuccess && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              🎉 Avaliação enviada com sucesso!
-            </Alert>
-          )}
-
           {isError && (
             <Alert severity="error" sx={{ mt: 2 }}>
               Ocorreu um erro ao enviar a avaliação.
             </Alert>
           )}
-        </>
+        </Box>
       )}
     </Box>
   );

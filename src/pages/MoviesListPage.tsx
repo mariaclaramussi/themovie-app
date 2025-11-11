@@ -24,12 +24,9 @@ export function MovieListPage() {
 
   return (
     <Container sx={{ py: 4 }}>
-      <Box sx={{ display: "flex", mb: 2, gap: 2 }}>
+      <Box sx={{ display: "flex", mb: 2, gap: 2, alignItems: "center" }}>
         <GoBackButton />
-        <Typography
-          variant="h4"
-          sx={{ fontSize: "2rem", fontWeight: "bold", mb: 3 }}
-        >
+        <Typography variant="h4" sx={{ fontSize: "2rem", fontWeight: "bold" }}>
           {mapCategoryToTitle[category!]}
         </Typography>
       </Box>

@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,7 @@ interface GoBackButtonProps {
 }
 
 export const GoBackButton = (props: GoBackButtonProps) => {
-  const { label = "Voltar", to } = props;
+  const { to } = props;
   const navigate = useNavigate();
 
   const handleGoBack = () => {
@@ -20,13 +20,8 @@ export const GoBackButton = (props: GoBackButtonProps) => {
   };
 
   return (
-    <Button
-      startIcon={<ArrowBackIcon />}
-      onClick={handleGoBack}
-      variant="outlined"
-      color="primary"
-    >
-      {label}
-    </Button>
+    <IconButton onClick={handleGoBack} color="secondary">
+      <ArrowBackIcon />
+    </IconButton>
   );
 };

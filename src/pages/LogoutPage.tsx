@@ -22,6 +22,7 @@ export default function LogoutPage() {
       localStorage.removeItem("session_id");
 
       navigate("/", { replace: true });
+      window.location.reload();
     };
 
     logout();

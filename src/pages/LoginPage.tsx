@@ -21,6 +21,7 @@ export default function LoginPage() {
     if (approvedToken) {
       handleCreateSession(approvedToken);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
   const handleLogin = async () => {
@@ -46,14 +47,29 @@ export default function LoginPage() {
   };
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" mt={10}>
-      <Typography variant="h4" gutterBottom>
-        Login com TMDB
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        flex: 1,
+        justifyContent: "center",
+        height: "80vh",
+      }}
+    >
+      <Typography variant="h4" gutterBottom textAlign="center">
+        Login com
+        <br /> The Movie DB
       </Typography>
       {isLoading ? (
         <CircularProgress />
       ) : (
-        <Button variant="contained" color="primary" onClick={handleLogin}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ fontWeight: "bold" }}
+          onClick={handleLogin}
+        >
           Entrar com The Movie Database
         </Button>
       )}
