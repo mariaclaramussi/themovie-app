@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress, Box, Typography } from "@mui/material";
 import { useDeleteSessionMutation } from "../api/tmdbAuth";
+import { getValidSessionId, clearSessionId } from "../schemas/session.schema";
 
 export default function LogoutPage() {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ export default function LogoutPage() {
 
   useEffect(() => {
     const logout = async () => {
-      const session_id = localStorage.getItem("session_id");
+      const session_id = getValidSessionId();
 
       if (session_id) {
         try {
@@ -19,7 +20,7 @@ export default function LogoutPage() {
         }
       }
 
-      localStorage.removeItem("session_id");
+      clearSessionId();
 
       navigate("/", { replace: true });
       window.location.reload();

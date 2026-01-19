@@ -12,8 +12,9 @@ import { MovieDetails } from "../types/movie";
 import { MovieRatingForm } from "./MovieRatingForm";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import { env } from "../schemas/env.schema";
 
-const IMG_URL = process.env.REACT_APP_TMDB_IMG_URL;
+const IMG_URL = env.REACT_APP_TMDB_IMG_URL;
 
 const style = {
   position: "absolute",

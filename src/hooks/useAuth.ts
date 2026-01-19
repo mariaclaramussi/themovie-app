@@ -1,9 +1,8 @@
 import { useState } from "react";
+import { getValidSessionId } from "../schemas/session.schema";
 
 export function useAuth() {
-  const [sessionId, _] = useState<string | null>(() =>
-    localStorage.getItem("session_id")
-  );
+  const [sessionId] = useState<string | null>(() => getValidSessionId());
 
   const isAuthenticated = !!sessionId;
 

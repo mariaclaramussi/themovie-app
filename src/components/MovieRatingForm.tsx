@@ -8,18 +8,16 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useForm, Controller, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useAddMovieRatingMutation,
   useGetMovieAccountStatesQuery,
 } from "../api/movieApi";
 import { useAccount } from "../hooks/useAccount";
+import { ratingSchema, RatingFormValues } from "../schemas/rating.schema";
 
 interface MovieRatingFormProps {
   movieId: number;
-}
-
-interface RatingFormValues {
-  value: number;
 }
 
 export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
@@ -36,6 +34,7 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
     reset,
   } = useForm<RatingFormValues>({
     defaultValues: { value: 0.5 },
+    resolver: zodResolver(ratingSchema),
   });
 
   const {
@@ -112,11 +111,6 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
           <Controller
             name="value"
             control={control}
-            rules={{
-              required: "A nota é obrigatória",
-              min: { value: 0.5, message: "Mínimo é 0.5" },
-              max: { value: 10, message: "Máximo é 10" },
-            }}
             render={({ field }) => (
               <>
                 <Slider

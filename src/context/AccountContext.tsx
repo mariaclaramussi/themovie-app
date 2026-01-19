@@ -4,6 +4,7 @@ import {
   useGetFavoriteMoviesQuery,
   useMarkAsFavoriteMutation,
 } from "../api/accountApi";
+import { getValidSessionId } from "../schemas/session.schema";
 
 interface AccountContextProps {
   accountId?: string;
@@ -22,8 +23,8 @@ const AccountContext = createContext<AccountContextProps | undefined>(
 export const AccountProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [sessionId, _] = useState<string | undefined>(
-    () => localStorage.getItem("session_id") || undefined
+  const [sessionId] = useState<string | undefined>(
+    () => getValidSessionId() || undefined
   );
   const [accountId, setAccountId] = useState<string | undefined>(undefined);
 

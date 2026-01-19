@@ -5,6 +5,7 @@ import {
   useCreateSessionMutation,
 } from "../api/tmdbAuth";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
+import { setValidSessionId } from "../schemas/session.schema";
 
 const TMDB_AUTH_URL = "https://www.themoviedb.org/authenticate";
 
@@ -38,7 +39,12 @@ export default function LoginPage() {
       const { session_id } = await createSession({
         request_token,
       }).unwrap();
-      localStorage.setItem("session_id", session_id);
+
+      if (!setValidSessionId(session_id)) {
+        console.error("Session ID retornado pela API é inválido");
+        return;
+      }
+
       navigate("/home");
       window.location.reload();
     } catch (error) {

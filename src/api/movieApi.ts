@@ -6,8 +6,9 @@ import {
   MovieListResponse,
 } from "../types/movie";
 import { baseQuery } from "./baseApi";
+import { env } from "../schemas/env.schema";
 
-const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
+const API_KEY = env.REACT_APP_TMDB_API_KEY;
 
 export const moviesApi = createApi({
   reducerPath: "moviesApi",

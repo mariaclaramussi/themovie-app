@@ -14,8 +14,9 @@ import { useLazyGetMovieDetailsQuery } from "../api/movieApi";
 import { useAccount } from "../hooks/useAccount";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { format } from "date-fns";
+import { env } from "../schemas/env.schema";
 
-const IMG_URL = process.env.REACT_APP_TMDB_IMG_URL;
+const IMG_URL = env.REACT_APP_TMDB_IMG_URL;
 
 export default function MovieCard({
   movie,
