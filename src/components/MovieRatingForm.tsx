@@ -15,6 +15,7 @@ import {
 } from "../api/movieApi";
 import { useAccount } from "../hooks/useAccount";
 import { ratingSchema, RatingFormValues } from "../schemas/rating.schema";
+import { toast } from "sonner";
 
 interface MovieRatingFormProps {
   movieId: number;
@@ -63,12 +64,18 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
 
   const onSubmit = async (data: RatingFormValues) => {
     if (!sessionId) {
-      alert("Você precisa estar logado para avaliar.");
+      toast.warning("Você precisa estar logado para avaliar.");
       return;
     }
 
-    await addRating({ movieId, value: data.value, sessionId });
-    setSubmittedRating(data.value);
+    try {
+      await addRating({ movieId, value: data.value, sessionId }).unwrap();
+      setSubmittedRating(data.value);
+      toast.success("Avaliação enviada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao enviar avaliação:", error);
+      toast.error("Erro ao enviar avaliação. Tente novamente.");
+    }
   };
 
   if (isAccountStateLoading) {

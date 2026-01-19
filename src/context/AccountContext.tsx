@@ -13,7 +13,7 @@ interface AccountContextProps {
   favoriteMovies?: any;
   isLoading: boolean;
   error?: any;
-  toggleFavorite: (mediaId: number, isFavorite: boolean) => Promise<void>;
+  toggleFavorite: (mediaId: number, isFavorite: boolean) => Promise<boolean>;
 }
 
 const AccountContext = createContext<AccountContextProps | undefined>(
@@ -54,15 +54,21 @@ export const AccountProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [markAsFavorite] = useMarkAsFavoriteMutation();
 
-  const toggleFavorite = async (mediaId: number, isFavorite: boolean) => {
-    if (!sessionId) return;
-    await markAsFavorite({
-      accountId: accountId!,
-      sessionId,
-      mediaId,
-      favorite: !isFavorite,
-    });
-    refetchFavorites();
+  const toggleFavorite = async (mediaId: number, isFavorite: boolean): Promise<boolean> => {
+    if (!sessionId) return false;
+    try {
+      await markAsFavorite({
+        accountId: accountId!,
+        sessionId,
+        mediaId,
+        favorite: !isFavorite,
+      }).unwrap();
+      refetchFavorites();
+      return true;
+    } catch (error) {
+      console.error("Erro ao alterar favorito:", error);
+      return false;
+    }
   };
 
   const isLoading = isAccountLoading || isFavoritesLoading;

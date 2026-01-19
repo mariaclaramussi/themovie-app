@@ -13,6 +13,7 @@ import { MovieRatingForm } from "./MovieRatingForm";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { env } from "../schemas/env.schema";
+import { toast } from "sonner";
 
 const IMG_URL = env.REACT_APP_TMDB_IMG_URL;
 
@@ -97,7 +98,18 @@ export const MovieDetailsModal = ({
                       }
                     >
                       <IconButton
-                        onClick={() => toggleFavorite(details?.id!, isFavorite)}
+                        onClick={async () => {
+                          const success = await toggleFavorite(details?.id!, isFavorite);
+                          if (success) {
+                            toast.success(
+                              isFavorite
+                                ? "Filme removido dos favoritos"
+                                : "Filme adicionado aos favoritos"
+                            );
+                          } else {
+                            toast.error("Erro ao atualizar favoritos");
+                          }
+                        }}
                         color={isFavorite ? "error" : "primary"}
                       >
                         {isFavorite ? (

@@ -15,6 +15,7 @@ import { useAccount } from "../hooks/useAccount";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { format } from "date-fns";
 import { env } from "../schemas/env.schema";
+import { toast } from "sonner";
 
 const IMG_URL = env.REACT_APP_TMDB_IMG_URL;
 
@@ -66,7 +67,14 @@ export default function MovieCard({
           {isFavoriteItem && (
             <IconButton
               size="small"
-              onClick={() => toggleFavorite(movie.id, true)}
+              onClick={async () => {
+                const success = await toggleFavorite(movie.id, true);
+                if (success) {
+                  toast.success("Filme removido dos favoritos");
+                } else {
+                  toast.error("Erro ao remover dos favoritos");
+                }
+              }}
               color="error"
             >
               <DeleteOutlineIcon fontSize="small" />

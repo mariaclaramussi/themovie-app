@@ -6,6 +6,7 @@ import {
 } from "../api/tmdbAuth";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
 import { setValidSessionId } from "../schemas/session.schema";
+import { toast } from "sonner";
 
 const TMDB_AUTH_URL = "https://www.themoviedb.org/authenticate";
 
@@ -31,6 +32,7 @@ export default function LoginPage() {
       window.location.href = `${TMDB_AUTH_URL}/${request_token}?redirect_to=${window.location.origin}/`;
     } catch (error) {
       console.error("Erro ao criar request token", error);
+      toast.error("Erro ao iniciar login. Tente novamente.");
     }
   };
 
@@ -42,13 +44,16 @@ export default function LoginPage() {
 
       if (!setValidSessionId(session_id)) {
         console.error("Session ID retornado pela API é inválido");
+        toast.error("Erro ao validar sessão. Tente novamente.");
         return;
       }
 
+      toast.success("Login realizado com sucesso!");
       navigate("/home");
       window.location.reload();
     } catch (error) {
       console.error("Erro ao criar sessão", error);
+      toast.error("Erro ao criar sessão. Tente novamente.");
     }
   };
 
