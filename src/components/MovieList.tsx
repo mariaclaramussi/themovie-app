@@ -1,5 +1,6 @@
 import { Box, Button, Link, Typography } from "@mui/material";
 import MovieCard from "./MovieCard";
+import { MovieCardSkeleton } from "./MovieCardSkeleton";
 import { useGetMoviesByCategoryQuery } from "../api/movieApi";
 import { Movie } from "../types/movie";
 
@@ -16,7 +17,33 @@ const MovieList = (props: MovieListProps) => {
   const movies = data?.results?.slice(0, 3) || [];
 
   if (isLoading) {
-    return <Typography>Carregando...</Typography>;
+    return (
+      <Box sx={{ mb: 4 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 2,
+          }}
+        >
+          <Typography variant="h2" sx={{ fontSize: "2rem", fontWeight: "bold" }}>
+            {title}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "1rem",
+          }}
+        >
+          {Array.from({ length: 3 }).map((_, index) => (
+            <MovieCardSkeleton key={index} />
+          ))}
+        </Box>
+      </Box>
+    );
   }
 
   return (

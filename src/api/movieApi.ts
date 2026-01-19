@@ -13,12 +13,13 @@ export const moviesApi = createApi({
   reducerPath: "moviesApi",
   baseQuery,
   endpoints: (builder) => ({
-    getMoviesByCategory: builder.query<MovieListResponse, { category: string }>(
-      {
-        query: ({ category }) =>
-          `/movie/${category}?api_key=${API_KEY}&language=pt-BR&page=1`,
-      }
-    ),
+    getMoviesByCategory: builder.query<
+      MovieListResponse,
+      { category: string; page?: number }
+    >({
+      query: ({ category, page = 1 }) =>
+        `/movie/${category}?api_key=${API_KEY}&language=pt-BR&page=${page}`,
+    }),
     getMovieDetails: builder.query<
       MovieDetails,
       { id: number; language?: string }

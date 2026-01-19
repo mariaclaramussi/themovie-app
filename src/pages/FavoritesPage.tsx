@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import MovieCard from "../components/MovieCard";
+import { MovieCardSkeleton } from "../components/MovieCardSkeleton";
 import { useAccount } from "../hooks/useAccount";
 import { Movie } from "../types/movie";
 import { GoBackButton } from "../components/GoBackButton";
@@ -8,7 +9,29 @@ import image from "../assets/images/noRecordsIllustration.svg";
 const FavoritesPage = () => {
   const { favoriteMovies, isLoading } = useAccount();
 
-  if (isLoading) return <p>Carregando favoritos...</p>;
+  if (isLoading) {
+    return (
+      <div>
+        <Box sx={{ display: "flex", mb: 2, gap: 2, alignItems: "center" }}>
+          <GoBackButton to="/home" />
+          <Typography variant="h4" sx={{ fontSize: "2rem", fontWeight: "bold" }}>
+            Meus Favoritos
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "1rem",
+          }}
+        >
+          {Array.from({ length: 4 }).map((_, index) => (
+            <MovieCardSkeleton key={index} />
+          ))}
+        </Box>
+      </div>
+    );
+  }
   if (!favoriteMovies) return <p>Nenhum filme favorito encontrado.</p>;
 
   return (
