@@ -11,7 +11,6 @@ export type SessionId = z.infer<typeof sessionIdSchema>;
 
 /**
  * Recupera e valida o session_id do localStorage
- * @returns session_id válido ou null se inválido/inexistente
  */
 export function getValidSessionId(): string | null {
   const storedValue = localStorage.getItem("session_id");
@@ -33,7 +32,6 @@ export function getValidSessionId(): string | null {
 
 /**
  * Salva o session_id no localStorage após validação
- * @returns true se salvo com sucesso, false se inválido
  */
 export function setValidSessionId(sessionId: string): boolean {
   const result = sessionIdSchema.safeParse(sessionId);

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -25,13 +25,13 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
 }) => {
   const { sessionId } = useAccount();
   const [addRating, { isLoading, isError }] = useAddMovieRatingMutation();
+  const [submittedRating, setSubmittedRating] = useState<number | null>(null);
 
   const {
     control,
     handleSubmit,
     formState: { errors, isDirty },
     setValue,
-    reset,
   } = useForm<RatingFormValues>({
     defaultValues: { value: 0.5 },
     resolver: zodResolver(ratingSchema),
@@ -40,7 +40,6 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
   const {
     data: accountState,
     isLoading: isAccountStateLoading,
-    refetch,
   } = useGetMovieAccountStatesQuery(
     { movieId, sessionId: sessionId! },
     { skip: !sessionId }
@@ -48,14 +47,19 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
 
   const currentValue = useWatch({ control, name: "value" });
 
-  const alreadyRated =
+  const ratedFromApi =
     typeof accountState?.rated === "object" && "value" in accountState.rated;
 
+  const alreadyRated = ratedFromApi || submittedRating !== null;
+
+  const displayRating = submittedRating ??
+    (ratedFromApi ? (accountState!.rated as { value: number }).value : null);
+
   useEffect(() => {
-    if (alreadyRated) {
+    if (ratedFromApi) {
       setValue("value", (accountState!.rated as { value: number }).value);
     }
-  }, [alreadyRated, accountState, setValue]);
+  }, [ratedFromApi, accountState, setValue]);
 
   const onSubmit = async (data: RatingFormValues) => {
     if (!sessionId) {
@@ -64,8 +68,7 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
     }
 
     await addRating({ movieId, value: data.value, sessionId });
-    await refetch();
-    reset({ value: data.value });
+    setSubmittedRating(data.value);
   };
 
   if (isAccountStateLoading) {
@@ -86,13 +89,10 @@ export const MovieRatingForm: React.FC<MovieRatingFormProps> = ({
         flexDirection: "column",
       }}
     >
-      {alreadyRated ? (
-        <>
-          <Typography variant="h6" mb={1} fontWeight="bold">
-            Sua avaliação: ⭐{" "}
-            {(accountState!.rated as { value: number }).value.toFixed(1)} /10
-          </Typography>
-        </>
+      {alreadyRated && displayRating !== null ? (
+        <Typography variant="h6" mb={1} fontWeight="bold">
+          Sua avaliação: ⭐ {displayRating.toFixed(1)} /10
+        </Typography>
       ) : (
         <Box
           sx={{
