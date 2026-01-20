@@ -1,35 +1,50 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress, Box, Typography } from "@mui/material";
 import { useDeleteSessionMutation } from "../api/tmdbAuth";
-import { getValidSessionId, clearSessionId } from "../schemas/session.schema";
+import { secureLogout, getAuthState } from "../services/authService";
 import { toast } from "sonner";
 
 export default function LogoutPage() {
   const navigate = useNavigate();
-  const [deleteSession, { isLoading }] = useDeleteSessionMutation();
+  const [deleteSession] = useDeleteSessionMutation();
+  const [isLoggingOut, setIsLoggingOut] = useState(true);
+  const [logoutStep, setLogoutStep] = useState("Iniciando logout seguro");
 
   useEffect(() => {
-    const logout = async () => {
-      const session_id = getValidSessionId();
+    const performSecureLogout = async () => {
+      const authState = getAuthState();
 
-      if (session_id) {
-        try {
-          await deleteSession({ session_id }).unwrap();
-          toast.success("Sessão encerrada com sucesso!");
-        } catch (err) {
-          console.error("Erro ao encerrar sessão TMDB:", err);
-          toast.error("Erro ao encerrar sessão. Você será desconectado localmente.");
-        }
+      if (!authState.isAuthenticated) {
+        toast.info("Você já está desconectado.");
+        navigate("/", { replace: true });
+        return;
       }
 
-      clearSessionId();
+      setLogoutStep("Revogando token local");
 
-      navigate("/", { replace: true });
-      window.location.reload();
+      // Executa logout seguro com callback para invalidar no servidor TMDB
+      const result = await secureLogout(async (sessionId: string) => {
+        setLogoutStep("Invalidando sessão no servidor TMDB");
+        await deleteSession({ session_id: sessionId }).unwrap();
+      });
+
+      if (result.success) {
+        setLogoutStep("Limpando dados locais");
+        toast.success("Sessão encerrada com segurança!");
+      } else {
+        toast.error(result.error || "Erro no logout. Dados locais foram limpos.");
+      }
+
+      setIsLoggingOut(false);
+
+      setTimeout(() => {
+        navigate("/", { replace: true });
+        window.location.reload();
+      }, 500);
     };
 
-    logout();
+    performSecureLogout();
   }, [deleteSession, navigate]);
 
   return (
@@ -37,7 +52,10 @@ export default function LogoutPage() {
       <Typography variant="h5" gutterBottom>
         Encerrando sua sessão...
       </Typography>
-      {isLoading && <CircularProgress />}
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        {logoutStep}
+      </Typography>
+      {isLoggingOut && <CircularProgress />}
     </Box>
   );
 }
