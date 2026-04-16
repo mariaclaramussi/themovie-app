@@ -1,4 +1,4 @@
-name: Deploy Kubernetes
+name: Build & Push Docker
 
 on:
   push:
@@ -7,42 +7,27 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Apply manifests no cluster
+  build-and-push:
+    name: Build e Push da imagem Docker
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v4
 
-      - name: Configurar kubectl
-        uses: azure/setup-kubectl@v4
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Configurar kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-
-      - name: Aplicar manifests da aplicação
-        run: |
-          kubectl apply -f k8s/redis-pod.yaml
-          kubectl apply -f k8s/redis-clusterip.yaml
-          kubectl apply -f k8s/deployment.yaml
-
-      - name: Aplicar manifests de monitoramento
-        run: kubectl apply -f k8s/monitoring/
-
-      - name: Aguardar rollout da aplicação
-        run: kubectl rollout status deployment/themovie-app --timeout=180s
-
-      - name: Aguardar rollout do Prometheus
-        run: kubectl rollout status deployment/prometheus --timeout=180s
-
-      - name: Aguardar rollout do Grafana
-        run: kubectl rollout status deployment/grafana --timeout=180s
-
-      - name: Verificar status final
-        run: |
-          kubectl get pods
-          kubectl get svc
+      - name: Build e Push da imagem
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/themovie-app:latest
+          build-args: |
+            REACT_APP_TMDB_API_KEY=${{ secrets.REACT_APP_TMDB_API_KEY }}
+            REACT_APP_TMDB_BASE_URL=${{ secrets.REACT_APP_TMDB_BASE_URL }}
+            REACT_APP_TMDB_IMG_URL=${{ secrets.REACT_APP_TMDB_IMG_URL }}
