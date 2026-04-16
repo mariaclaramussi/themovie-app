@@ -1,0 +1,24 @@
+services:
+  app:
+    image: mariamussi/themovie-app:latest
+    build:
+      context: .
+      args:
+        REACT_APP_TMDB_API_KEY: ${REACT_APP_TMDB_API_KEY}
+        REACT_APP_TMDB_BASE_URL: ${REACT_APP_TMDB_BASE_URL}
+        REACT_APP_TMDB_IMG_URL: ${REACT_APP_TMDB_IMG_URL}
+    ports:
+      - "3000:80"
+    env_file:
+      - .env
+    volumes:
+      - nginx_logs:/var/log/nginx
+    networks:
+      - themovie_network
+
+volumes:
+  nginx_logs:
+
+networks:
+  themovie_network:
+    driver: bridge
